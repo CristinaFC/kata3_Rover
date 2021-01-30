@@ -31,16 +31,8 @@ public class Rover {
 		this.heading = heading;
 	}
 
-	public void addObstacles(Obstacle...obstacles){
-		Arrays.stream(obstacles).forEach(obs -> this.obstacles.put(obs.getPosition(),obs));
-	}
-
-	public boolean detectedNextObstacle(){
-		return !obstacles.containsKey(position().forward(heading));
-	}
-
-	public boolean detectedBackObstacle(){
-		return !obstacles.containsKey(position().backward(heading));
+	public void addObstacle(Obstacle obstacle){
+		this.obstacles.put(obstacle.getPosition(),obstacle);
 	}
 
 	public Heading heading() {
@@ -60,8 +52,9 @@ public class Rover {
 
 	public void go(Order... orders){
 		for (Order order: orders) {
-			if (order == Order.Forward && detectedNextObstacle()) return;
-			if (order == Order.Backward && detectedNextObstacle()) return;
+			if(order.equals(Order.Forward) && position.detectedNextObstacle(heading)) break;
+			if(order.equals(Order.Backward) && position.detectedBackObstacle(heading)) break;
+
 			actions.get(order).execute();
 		}
 	}
@@ -75,6 +68,13 @@ public class Rover {
 			this.y = y;
 		}
 
+		public boolean detectedNextObstacle(Heading heading){
+			return obstacles.containsKey(forward(heading));
+		}
+
+		public boolean detectedBackObstacle(Heading heading){
+			return obstacles.containsKey(backward(heading));
+		}
 		public Position forward(Heading heading) {
 			if(heading == North) return new Position(x,y+1);
 			if(heading == South) return new Position(x,y-1);
@@ -106,6 +106,10 @@ public class Rover {
 			return object != null && object.getClass() == Position.class;
 		}
 
+		@Override
+		public int hashCode() {
+			return Objects.hash(x, y);
+		}
 	}
 
 	public enum Order {

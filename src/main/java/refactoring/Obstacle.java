@@ -1,8 +1,10 @@
 package refactoring;
 
+import java.util.Objects;
 import java.util.Random;
 
 import static refactoring.Rover.Position;
+import static refactoring.Rover.obstacles;
 
 public class Obstacle {
 
@@ -15,4 +17,5 @@ public class Obstacle {
     public Position getPosition() {
         return position;
     }
+
 }
